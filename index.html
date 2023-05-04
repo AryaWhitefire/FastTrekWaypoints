@@ -6,24 +6,56 @@
   </head>
   <body>
     <button onclick="copyAndClear()" class="bigbutton">Copy and Clear</button>
+
+	<select name="columns" id="columns" onchange="handleSelect()">
+		<option value="1">1 column</option>
+		<option value="2">2 columns</option>
+		<option value="3">3 columns</option>
+		<option value="4" selected>4 columns</option>
+		<option value="5">5 columns</option>
+	</select>
+	<table id="wp-table">
+	</table>
 	<style>
 		.bigbutton {
 			display: block;
 			width: 100%;
 			border: none;
-			background-color: #04AA6D;
+			background-color: #046DAA;
 			padding: 14px 28px;
 			font-size: 16px;
 			cursor: pointer;
 			text-align: center;
 		}
-	
+
 		tr {
 			width: 25%;
 			float: left;
 			height: auto;
 		}
+		
 		td { text-align: center; }
+		
+		#wp-table tr {
+			width: 100%;
+		}
+
+		#wp-table[data-columns='2'] tr {
+			width: 50%;
+		}
+
+		#wp-table[data-columns='3'] tr {
+			width: 33.33%;
+		}
+
+		#wp-table[data-columns='4'] tr {
+			width: 25%;
+		}
+
+		#wp-table[data-columns='5'] tr {
+			width: 20%;
+		}		
+		
 	</style>
     <script>
       const treks = [
@@ -215,8 +247,9 @@
 		{ "n": "186", "target": "Wrelk's Salon", "wp_name": "Almuten Waypoint", "wp": "[&BJQBAAA=]" }
 	];
 
-      // Create table
-      const table = document.createElement("table");
+
+//      const table = document.createElement("table");
+	table = document.getElementById('wp-table');
 
 //	 const header = table.createTHead();
 //      const row = header.insertRow(0);
@@ -254,6 +287,16 @@
       });
       table.appendChild(tbody);
       document.body.appendChild(table);
+  
+	  function handleSelect() {
+		var select = document.getElementById('columns');
+		var columns = select.value;
+		var table = document.getElementById('wp-table');
+
+		table.setAttribute('data-columns', columns);
+	}
+ 
+	handleSelect()
   
 	function copySelected()
 	{
