@@ -1,86 +1,89 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Treks Table</title>
-  </head>
-  <body>
-    <button onclick="copyAndClear()" class="bigbutton">Copy and Clear</button>
-
-	<select name="columns" id="columns" onchange="handleSelect()">
-		<option value="1">1 column</option>
-		<option value="2">2 columns</option>
-		<option value="3">3 columns</option>
-		<option value="4">4 columns</option>
-		<option value="5">5 columns</option>
-		<option value="6" selected>6 columns</option>
-	</select>
-
-	<label for="font-size">Font size:</label>
-	<select id="font-size" onchange="changeFontSize()">
-		<option value="100%">100%</option>
-		<option value="90%">90%</option>
-		<option value="75%">75%</option>
-		<option value="66%">66%</option>
-	</select>
-	
-	<label>
-		<input type="checkbox" id="wp-column-hide" onchange="toggleWpColumn()"> Show WPs
-	</label>
-
-	<table id="wp-table" class="wp_table hide-wp-col">
-	</table>
+<head>
+		<meta charset="UTF-8">
+		<title>Fast Trek Waypoints</title>
+<!--		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">-->
 	<style>
+
+		html { overflow-y: hidden; }
+		
+		html,
+		body {
+			height: 100%;
+			margin: 2px;
+		}
+
+		.cont {
+			display: flex;
+			list-style: none;
+/*			flex-basis: 90%; */
+			height: 90%; 
+
+			flex-flow: column wrap;
+		}
+		.cont li {
+			padding: 1px
+		}
+		
 		.bigbutton {
 			display: block;
 			width: 100%;
+			height: 100%;
 			border: none;
 			background-color: #046DAA;
-			padding: 14px 28px;
-			font-size: 16px;
+/*			padding: 14px 14px; */
+			font-size: 20px;
 			cursor: pointer;
 			text-align: center;
 		}
-
-		tr {
-			width: 25%;
-			float: left;
-			height: auto;
-		}
 		
-		td { text-align: center; }
-		
-		#wp-table tr {
+		.fullpage {
+			
 			width: 100%;
+			height: 100%;
 		}
-
-		#wp-table[data-columns='2'] tr {
-			width: 50%;
+		
+		.alpha_header {
+			font-size: 150%;
 		}
-
-		#wp-table[data-columns='3'] tr {
-			width: 33.33%;
+		
+		.header {
+			height: 5%;
+			overflow: clip;
 		}
-
-		#wp-table[data-columns='4'] tr {
-			width: 25%;
+		
+		.footer {
+			min-height: 1%;
+			background: #046DAA;
 		}
-
-		#wp-table[data-columns='5'] tr {
-			width: 20%;
-		}		
-
-		#wp-table[data-columns='6'] tr {
-			width: 16.66%;
-		}		
-
-		.wp_table.hide-wp-col td:nth-child(3) {
-		  display: none;
-		}
-
+		
 	</style>
-    <script>
-      const treks = [
+</head>
+<body>
+	<section class="fullpage">
+		<div class="header">
+			<button id="concat-btn" class="bigbutton"> Copy and Clear</button>	
+		</div>
+<!--		
+		<label for="font-size">Font size:</label>
+		<select id="font-size" onchange="changeFontSize()">
+			<option value="100%">100%</option>
+			<option value="90%">90%</option>
+			<option value="80%">80%</option>
+			<option value="75%">75%</option>
+			<option value="66%">66%</option>
+		</select>
+
+		<label>
+			<input type="checkbox" id="wp-column-hide" onchange="toggleWpColumn()"> Show WPs
+		</label>		
+-->		
+		<ul class="cont"></ul>
+		<div class="footer"></div>
+	</section>
+	<script>
+	  const treks = [
 		{ "n": "1", "target": "Altar Brook Lair", "wp_name": "Crossing Waypoint", "wp": "[&BPIAAAA=]" },
 		{ "n": "2", "target": "Anthem's Hold", "wp_name": "Shipwreck Rock Waypoint", "wp": "[&BOQGAAA=]" },
 		{ "n": "3", "target": "Anya's Patch", "wp_name": "Nolan Waypoint", "wp": "[&BN4AAAA=]" },
@@ -269,113 +272,64 @@
 		{ "n": "186", "target": "Wrelk's Salon", "wp_name": "Almuten Waypoint", "wp": "[&BJQBAAA=]" }
 	];
 
+	const my_ul = document.querySelector('.cont');
 
-//      const table = document.createElement("table");
-	table = document.getElementById('wp-table');
+	var previous_first_letter = ''
 
-//	 const header = table.createTHead();
-//      const row = header.insertRow(0);
-//      const columns = ["N", "Target", "Waypoint Name", "Waypoint", "Selected"];
-//      columns.forEach((column) => {
-//        const th = document.createElement("th");
-//        const text = document.createTextNode(column);
-//        th.appendChild(text);
-//        row.appendChild(th);
-//      });
-
-      const tbody = document.createElement("tbody");
-      treks.forEach((trek) => {
-        const row = tbody.insertRow();
-//	   const row = document.createElement("tr");
-
-		var cell, text
-
-		const checkbox = document.createElement("input");
-		checkbox.type = "checkbox";
-		cell = row.insertCell(-1);
-          cell.appendChild(checkbox);		
-
-		cell = document.createElement("td");
-		text = document.createTextNode(trek["target"]);
-		cell.appendChild(text);
-		row.appendChild(cell);
-
-		cell = document.createElement("td");
-		cell.classList.add("wp_td");
-		text = document.createTextNode(trek["wp"]);
-		cell.appendChild(text);
-		row.appendChild(cell);
+	treks.forEach(trek => {
+	
+		first_letter = trek.target.substring(0, 1)
+		
+		if(first_letter !== previous_first_letter) {
+			const li = document.createElement('li');
+			const section_header = document.createElement('span');
+			section_header.textContent = `-${first_letter}-`;
+			section_header.classList.add("alpha_header");
+			li.append(section_header)
+			my_ul.appendChild(li);
+			previous_first_letter = first_letter
+		}
 			
-		tbody.appendChild(row);
-      });
-      table.appendChild(tbody);
-      document.body.appendChild(table);
-  
-	  function handleSelect() {
-		var select = document.getElementById('columns');
-		var columns = select.value;
-		var table = document.getElementById('wp-table');
+			
+	
+		const li = document.createElement('li');
+		const label = document.createElement('label');
+		
+		const checkbox = document.createElement('input');
+		checkbox.type = 'checkbox';
+		
+		label.appendChild(checkbox);
+		label.appendChild( document.createTextNode(trek.target) );
+		li.appendChild(label);
 
-		table.setAttribute('data-columns', columns);
-	}
+		my_ul.appendChild(li);
+	});
 
+	const concatBtn = document.querySelector('#concat-btn');
 
+	concatBtn.addEventListener('click', () => {
+		const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+		let output = '';
+		checkboxes.forEach((checkbox, index) => {
+			if (checkbox.checked) {
+				const trek = treks[index];
+				output += `${trek.target}: ${trek.wp} `;
+				checkbox.checked = false;
+			}
+		});
+		navigator.clipboard.writeText(output.trim());
+		console.log(output.trim());
+	});
+	
 	function changeFontSize() {
 		var select = document.getElementById("font-size");
 		var value = select.options[select.selectedIndex].value;
-		var cells = document.querySelectorAll("table td, table th");
-//		var cells = document.getElementById('wp-table');
+		var cells = document.querySelectorAll("li ");
 		for (var i = 0; i < cells.length; i++) {
 			cells[i].style.fontSize = value;
 		}
-	}
-
-      function toggleWpColumn() {
-        const checkbox = document.getElementById("wp-column-hide");
-        const table = document.querySelector(".wp_table");
-	console.log(checkbox, table)
-
-        if (checkbox.checked) {
-          table.classList.remove("hide-wp-col");
-        } else {
-          table.classList.add("hide-wp-col");		
-        }
-      }
-
-	handleSelect()
-  
-	function copySelected()
-	{
-		let wpString = "";
-		const checkboxes = document.querySelectorAll("input[type='checkbox']");
-		checkboxes.forEach((checkbox, index) => {
-			if (checkbox.checked) {
-				const row = checkbox.parentNode.parentNode;
-				const wp = row.cells[2].textContent;
-				wpString += wp;
-			}
-		});
-		navigator.clipboard.writeText(wpString);
-	}
-
-	function clearCheckboxes()
-	{
-		const checkboxes = document.querySelectorAll("input[type='checkbox']");
-		checkboxes.forEach((checkbox) => {
-			checkbox.checked = false;
-		});
-     }
-	 
-	function copyAndClear()
-	{
-		copySelected();
-		clearCheckboxes();
-	}
-
-
-    </script>
-  </body>
+	}	
+	</script>
+</body>
 </html>
-
-
 
