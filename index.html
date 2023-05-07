@@ -446,10 +446,10 @@ const treks = [
 
 
 	function populate_chattexts(active_treks_by_wp, active_trek_wps) {
-		
+
 		popoverBody.innerHTML = '';
 		
-		const max_wps_per_chattext = 7;
+		const max_wps_per_chattext = 6;
 		var wp_total = 0;
 		var chattext = '';
 		
@@ -476,7 +476,14 @@ const treks = [
 					}
 				});
 			} else {
-				chattext += wp
+			
+				console.log(active_treks_by_wp[wp][0].wpc)
+			
+				if (active_treks_by_wp[wp][0].wpc > 1)  {
+					chattext += `${wp}(${active_treks_by_wp[wp][0].target})`
+				} else {
+					chattext += wp
+				}
 			}
 			
 			wp_total += num_wps;
