@@ -14,7 +14,7 @@
 			margin: 2px;
 		}
 
-		.cont {
+		#trek-list {
 			display: flex;
 			list-style: none;
 /*			flex-basis: 90%; */
@@ -22,13 +22,14 @@
 
 			flex-flow: column wrap;
 		}
-		.cont li {
-			padding: 1px
+		#trek-list li {
+/*			padding: 1px */
+			margin: 1px
 		}
 		
 		.bigbutton {
-			display: block;
-			width: 100%;
+			display: table-cell;
+			min-width: 100%;
 			height: 100%;
 			border: none;
 			background-color: #046DAA;
@@ -36,6 +37,7 @@
 			font-size: 20px;
 			cursor: pointer;
 			text-align: center;
+			align: center;
 		}
 		
 		.fullpage {
@@ -57,13 +59,87 @@
 			min-height: 1%;
 			background: #046DAA;
 		}
-		
+
+		#chattexts-popover {
+			display: none;
+			position: fixed;
+			top: 12.5%;
+			left: 12.5%;
+			width: 75%;
+			height: 75%;
+			background-color: white;
+			border-radius: 15px;
+			border: 2px solid black;
+			padding: 10px;
+			z-index: 1;
+		  }
+
+		#chattexts-copied-popover {
+			display: none;
+			position: fixed;
+			top: 1%;
+			left: 12.5%;
+			width: 75%;
+			max-width: 75%;
+
+			background-color: lightgrey;
+			border-radius: 15px;
+			border: 2px solid black;
+			padding: 15px 15px;
+			z-index: 2;
+		}
+
+
+		#popover-body {
+			height: 93%;
+		}
+
+		.chattext {
+			border-radius: 15px;
+			border: 2px solid black;
+			background-color: lightgrey;			
+			padding: 15px 15px;
+			margin: 10px;
+			cursor: pointer;
+		}
+
+		#popover-footer {
+			height: 7%
+			min-height: 7%;
+		}
+
+		#chattexts-list {
+			list-style: none;
+		}
+		#chattexts-list li {
+			cursor: pointer;
+			padding: 1px 10px
+			border: 1px solid black;
+		}
+
+
 	</style>
 </head>
 <body>
+
+	<div id="chattexts-copied-popover" ></div>
+
+	<div id="chattexts-popover" >
+
+		
+		<div id="popover-body">
+<!--			<ul id="chattexts-list"></ul> -->
+		</div>
+
+		<div id="popover-footer">
+			<button id="chattexts-popover-close-btn" class="bigbutton"> Close</button>	
+		</div>
+	  
+	</div>
+	
 	<section class="fullpage">
 		<div class="header">
-			<button id="concat-btn" class="bigbutton"> Copy and Clear</button>	
+			<button id="go-btn" class="bigbutton"> Get Waypoints</button>	
 		</div>
 <!--		
 		<label for="font-size">Font size:</label>
@@ -79,200 +155,226 @@
 			<input type="checkbox" id="wp-column-hide" onchange="toggleWpColumn()"> Show WPs
 		</label>		
 -->		
-		<ul class="cont"></ul>
+		<ul id="trek-list"></ul>
 		<div class="footer"></div>
 	</section>
 	<script>
-	  const treks = [
-		{ "n": "1", "target": "Altar Brook Lair", "wp_name": "Crossing Waypoint", "wp": "[&BPIAAAA=]" },
-		{ "n": "2", "target": "Anthem's Hold", "wp_name": "Shipwreck Rock Waypoint", "wp": "[&BOQGAAA=]" },
-		{ "n": "3", "target": "Anya's Patch", "wp_name": "Nolan Waypoint", "wp": "[&BN4AAAA=]" },
-		{ "n": "4", "target": "Arctodus Haunt", "wp_name": "Vendrake's Homestead Waypoint", "wp": "[&BH4BAAA=]" },
-		{ "n": "5", "target": "Backroot Fountain", "wp_name": "Reckoner's Waypoint", "wp": "[&BLsEAAA=]" },
-		{ "n": "6", "target": "Badjelly Kelpbed", "wp_name": "Valslake Waypoint", "wp": "[&BMADAAA=]" },
-		{ "n": "7", "target": "Bandit's Cabbage Patch", "wp_name": "Wynchona Rally Point Waypoint", "wp": "[&BKgAAAA=]" },
-		{ "n": "8", "target": "Beetlestone Mirador", "wp_name": "Beetletun Waypoint", "wp": "[&BPoAAAA=]" },
-		{ "n": "9", "target": "Black Lion Root Cellar", "wp_name": "Reckoner's Waypoint", "wp": "[&BLsEAAA=]" },
-		{ "n": "10", "target": "Blackblade Butte", "wp_name": "Font of Rhand Waypoint", "wp": "[&BNwAAAA=]" },
-		{ "n": "11", "target": "Blasted Sepulchre", "wp_name": "Blasted Moors Waypoint", "wp": "[&BNoAAAA=]" },
-		{ "n": "12", "target": "Blood Ooze Gallery", "wp_name": "Mournful Waypoint", "wp": "[&BK0BAAA=]" },
-		{ "n": "13", "target": "Bluup's Comeuppance", "wp_name": "Research Waypoint", "wp": "[&BLgEAAA=]" },
-		{ "n": "14", "target": "Brandstrike Dig", "wp_name": "Helliot Mine Waypoint", "wp": "[&BEsBAAA=]" },
-		{ "n": "15", "target": "Briarthorn Barrier", "wp_name": "Spiral Waypoint", "wp": "[&BDUBAAA=]" },
-		{ "n": "16", "target": "Broken Falls Courtyard", "wp_name": "Ruins of Rin Waypoint", "wp": "[&BKwDAAA=]" },
-		{ "n": "17", "target": "Broodmother Falls", "wp_name": "Yak's Bend Waypoint", "wp": "[&BIQCAAA=]" },
-		{ "n": "18", "target": "Brothers' Notch", "wp_name": "Hero's Compass Waypoint", "wp": "[&BJADAAA=]" },
-		{ "n": "19", "target": "Burstbubble Blind", "wp_name": "Tumok's Waypoint", "wp": "[&BPsBAAA=]" },
-		{ "n": "20", "target": "Cache of the Pursued", "wp_name": "Caer Shadowfain Waypoint", "wp": "[&BCEDAAA=]" },
-		{ "n": "21", "target": "Cademkrall Overlook", "wp_name": "Watchcrag Tower Waypoint", "wp": "[&BIgBAAA=]" },
-		{ "n": "22", "target": "Canyonweb Cave", "wp_name": "Brandview Waypoint", "wp": "[&BAQCAAA=]" },
-		{ "n": "23", "target": "Captain's Berth", "wp_name": "Lights Waypoint", "wp": "[&BLICAAA=]" },
-		{ "n": "24", "target": "Castavall Corner", "wp_name": "Castavall Waypoint", "wp": "[&BK4BAAA=]" },
-		{ "n": "25", "target": "Cathedral's Cavity", "wp_name": "Union Waypoint", "wp": "[&BKsCAAA=]" },
-		{ "n": "26", "target": "Cave Bear Cache", "wp_name": "Snowhawk Landing Waypoint", "wp": "[&BL8AAAA=]" },
-		{ "n": "27", "target": "Cave Spider Nidus", "wp_name": "Pinnacle Enclave Waypoint", "wp": "[&BJgBAAA=]" },
-		{ "n": "28", "target": "Claypool Bailey", "wp_name": "Claypool Waypoint", "wp": "[&BPYAAAA=]" },
-		{ "n": "29", "target": "Constellation Parapet", "wp_name": "Reckoner's Waypoint", "wp": "[&BLsEAAA=]" },
-		{ "n": "30", "target": "Corruption's Teeth", "wp_name": "Drakkar Waypoint", "wp": "[&BIYCAAA=]" },
-		{ "n": "31", "target": "Covington's Stowage", "wp_name": "Laughing Gull Waypoint", "wp": "[&BKgBAAA=]" },
-		{ "n": "32", "target": "Cutthroat's Rest", "wp_name": "Brigantine Waypoint", "wp": "[&BM0DAAA=]" },
-		{ "n": "33", "target": "Cymbel's Glen", "wp_name": "Ogre Road Waypoint", "wp": "[&BE8BAAA=]" },
-		{ "n": "34", "target": "Dawngleam Pergola", "wp_name": "Ronan's Waypoint", "wp": "[&BLwEAAA=]" },
-		{ "n": "35", "target": "Deepmire Diver", "wp_name": "Oxbow Isle Waypoint", "wp": "[&BNECAAA=]" },
-		{ "n": "36", "target": "Defiled Delve", "wp_name": "Darkwound Waypoint", "wp": "[&BBEAAAA=]" },
-		{ "n": "37", "target": "Delight's Balcony", "wp_name": "Pagga's Waypoint", "wp": "[&BKYCAAA=]" },
-		{ "n": "38", "target": "Destiny's Guildhall", "wp_name": "Shaemoor Waypoint", "wp": "[&BO8AAAA=]" },
-		{ "n": "39", "target": "Dirtclaw Cleft", "wp_name": "Bloodfin Lake Waypoint", "wp": "[&BOMBAAA=]" },
-		{ "n": "40", "target": "Doefalls Court", "wp_name": "Ascalon City Waypoint", "wp": "[&BIcBAAA=]" },
-		{ "n": "41", "target": "Drakecleft Shelf", "wp_name": "Fangfury Watch Waypoint", "wp": "[&BEwBAAA=]" },
-		{ "n": "42", "target": "Drakehatch Shore", "wp_name": "Breachwater Waypoint", "wp": "[&BGQBAAA=]" },
-		{ "n": "43", "target": "Droknah Gate", "wp_name": "Old Sledge Site Waypoint", "wp": "[&BNQCAAA=]" },
-		{ "n": "44", "target": "Drowned Plaza", "wp_name": "Signal Peak Waypoint", "wp": "[&BO0CAAA=]" },
-		{ "n": "45", "target": "East End Falls", "wp_name": "East End Waypoint", "wp": "[&BGAAAAA=]" },
-		{ "n": "46", "target": "Eastlurk Alley", "wp_name": "Dwayna Waypoint", "wp": "[&BCMDAAA=]" },
-		{ "n": "47", "target": "Elise's Surprise", "wp_name": "Demetra Waypoint", "wp": "[&BKsAAAA=]" },
-		{ "n": "48", "target": "Ettinbreath Lair", "wp_name": "Demon's Maw Waypoint", "wp": "[&BOYAAAA=]" },
-		{ "n": "49", "target": "Fathom Five Forcefield", "wp_name": "Vesper Bell Waypoint", "wp": "[&BPICAAA=]" },
-		{ "n": "50", "target": "Fawcett's Porch", "wp_name": "Arca Waypoint", "wp": "[&BLIAAAA=]" },
-		{ "n": "51", "target": "Fire Imp Pocket", "wp_name": "Maelstrom's Waypoint", "wp": "[&BM0CAAA=]" },
-		{ "n": "52", "target": "Firefrog Springs", "wp_name": "Flamefrog Waypoint", "wp": "[&BMwBAAA=]" },
-		{ "n": "53", "target": "Firewatch Flybridge", "wp_name": "Firewatch Encampment Waypoint", "wp": "[&BO0BAAA=]" },
-		{ "n": "54", "target": "Fisher's Crag", "wp_name": "Old Golem Factory Waypoint", "wp": "[&BK4EAAA=]" },
-		{ "n": "55", "target": "Flakk's Lapidary Nook", "wp_name": "Accountancy Waypoint", "wp": "[&BLYEAAA=]" },
-		{ "n": "56", "target": "Forager's Midden", "wp_name": "Steelbrachen Waypoint", "wp": "[&BFsCAAA=]" },
-		{ "n": "57", "target": "Forbidden Shear", "wp_name": "Murmur Waypoint", "wp": "[&BK8CAAA=]" },
-		{ "n": "58", "target": "Foreman's Recess", "wp_name": "Dociu Waypoint", "wp": "[&BFgCAAA=]" },
-		{ "n": "59", "target": "Forgotten Grotto", "wp_name": "Terra Carorunda Waypoint", "wp": "[&BAECAAA=]" },
-		{ "n": "60", "target": "Founder's Flagon Hearth", "wp_name": "Kestrel Waypoint", "wp": "[&BD0EAAA=]" },
-		{ "n": "61", "target": "Freestand Scaffold", "wp_name": "Ruins of Rin Waypoint", "wp": "[&BKwDAAA=]" },
-		{ "n": "62", "target": "Frozen Antrum", "wp_name": "White Paper Waypoint", "wp": "[&BE8CAAA=]" },
-		{ "n": "63", "target": "Gallow Canyons", "wp_name": "Gallowfields Waypoint", "wp": "[&BGMAAAA=]" },
-		{ "n": "64", "target": "Gardenroot Alcove", "wp_name": "Reckoner's Waypoint", "wp": "[&BLsEAAA=]" },
-		{ "n": "65", "target": "Gnashar's Viewpoint", "wp_name": "Wendon Waypoint", "wp": "[&BF0AAAA=]" },
-		{ "n": "66", "target": "Green Moa Paddock", "wp_name": "Caledon Haven Waypoint", "wp": "[&BDwBAAA=]" },
-		{ "n": "67", "target": "Grenth's Pavillion", "wp_name": "Grenth Waypoint", "wp": "[&BCQDAAA=]" },
-		{ "n": "68", "target": "Grimsdottir's Duty", "wp_name": "Shelter Rock Waypoint", "wp": "[&BIsDAAA=]" },
-		{ "n": "69", "target": "Guardian Overwatch", "wp_name": "Grey Gritta's Waypoint", "wp": "[&BKkAAAA=]" },
-		{ "n": "70", "target": "Hawkeye Perch", "wp_name": "Serpent Waypoint", "wp": "[&BEUCAAA=]" },
-		{ "n": "71", "target": "Heart Speaks Notch", "wp_name": "Apostate Waypoint", "wp": "[&BB0CAAA=]" },
-		{ "n": "72", "target": "Heartwoods Honey Cache", "wp_name": "Phinney Waypoint", "wp": "[&BPMAAAA=]" },
-		{ "n": "73", "target": "Heidi's Showpiece", "wp_name": "Seraph's Landing Waypoint", "wp": "[&BKcAAAA=]" },
-		{ "n": "74", "target": "Hermit's Roost", "wp_name": "Rosko's Campsite Waypoint", "wp": "[&BNgAAAA=]" },
-		{ "n": "75", "target": "Hidden Owl Distillery", "wp_name": "Owl Waypoint", "wp": "[&BMEAAAA=]" },
-		{ "n": "76", "target": "Holystone Sanctum", "wp_name": "Sanctum Waypoint", "wp": "[&BMUDAAA=]" },
-		{ "n": "77", "target": "Icewurm Trench", "wp_name": "Dimotiki Waypoint", "wp": "[&BH8CAAA=]" },
-		{ "n": "78", "target": "Ideation Leap", "wp_name": "Incubation Waypoint", "wp": "[&BLUEAAA=]" },
-		{ "n": "79", "target": "Imphaunt Hallow", "wp_name": "Wychmire Waypoint", "wp": "[&BEEBAAA=]" },
-		{ "n": "80", "target": "Irondock Viewpoint", "wp_name": "Duskrend Overlook Waypoint", "wp": "[&BIkBAAA=]" },
-		{ "n": "81", "target": "Isenfell Wash", "wp_name": "Isenfall Waypoint", "wp": "[&BLgAAAA=]" },
-		{ "n": "82", "target": "Isgarren Viewpoint", "wp_name": "Darkwound Waypoint", "wp": "[&BBEAAAA=]" },
-		{ "n": "83", "target": "Jaguar Pride Den", "wp_name": "Muridian Waypoint", "wp": "[&BEcAAAA=]" },
-		{ "n": "84", "target": "Junker's Apex", "wp_name": "Junker's Waypoint", "wp": "[&BDcEAAA=]" },
-		{ "n": "85", "target": "Kaldar's Hot Seat", "wp_name": "Eastern Watchpost Waypoint", "wp": "[&BI0DAAA=]" },
-		{ "n": "86", "target": "Kari's Hot Spot", "wp_name": "Cereboth Waypoint", "wp": "[&BBIAAAA=]" },
-		{ "n": "87", "target": "Kegbrawl Watch", "wp_name": "Hero's Compass Waypoint", "wp": "[&BJADAAA=]" },
-		{ "n": "88", "target": "Kevach's Strongroom", "wp_name": "Lostvyrm Cave Waypoint", "wp": "[&BMEDAAA=]" },
-		{ "n": "89", "target": "Lakebottom Underpass", "wp_name": "Ojon's Lumbermill Waypoint", "wp": "[&BPkAAAA=]" },
-		{ "n": "90", "target": "Lawen Grotto", "wp_name": "First Haven Waypoint", "wp": "[&BIsBAAA=]" },
-		{ "n": "91", "target": "Lightfoot Dock", "wp_name": "Thunderhead Waypoint", "wp": "[&BPACAAA=]" },
-		{ "n": "92", "target": "Lily's Bivvy", "wp_name": "Icespear's Waypoint", "wp": "[&BCACAAA=]" },
-		{ "n": "93", "target": "Lionguard Larder", "wp_name": "Twinspur Haven Waypoint", "wp": "[&BH0BAAA=]" },
-		{ "n": "94", "target": "Lychcroft Wardenship", "wp_name": "Shadowheart Site Waypoint", "wp": "[&BAwAAAA=]" },
-		{ "n": "95", "target": "Magihedron Corner", "wp_name": "Metrical Court Waypoint", "wp": "[&BBMEAAA=]" },
-		{ "n": "96", "target": "Master Control LIN39", "wp_name": "Muridian Waypoint", "wp": "[&BEcAAAA=]" },
-		{ "n": "97", "target": "Melandru's Fount", "wp_name": "Melandru Waypoint", "wp": "[&BCcDAAA=]" },
-		{ "n": "98", "target": "Meltwater Cave", "wp_name": "Scale Strand Waypoint", "wp": "[&BEgCAAA=]" },
-		{ "n": "99", "target": "Mina's Target Shoot", "wp_name": "Commons Waypoint", "wp": "[&BCoDAAA=]" },
-		{ "n": "100", "target": "Mistriven Shelf", "wp_name": "Mistriven Waypoint", "wp": "[&BJkBAAA=]" },
-		{ "n": "101", "target": "Moleberia Prison", "wp_name": "Halvaunt Waypoint", "wp": "[&BHgBAAA=]" },
-		{ "n": "102", "target": "Monument to the Ancient One", "wp_name": "Owain's Refuge Waypoint", "wp": "[&BNgGAAA=]" },
-		{ "n": "103", "target": "Narrowkraal Crossing", "wp_name": "Ogre Road Waypoint", "wp": "[&BE8BAAA=]" },
-		{ "n": "104", "target": "Necrolith Landing", "wp_name": "Caledon Waypoint", "wp": "[&BBIEAAA=]" },
-		{ "n": "105", "target": "Orecart Hoist", "wp_name": "Pig Iron Waypoint", "wp": "[&BBcCAAA=]" },
-		{ "n": "106", "target": "Orvanic Sourcewaters", "wp_name": "Ocean's Gullet Waypoint", "wp": "[&BMkBAAA=]" },
-		{ "n": "107", "target": "Osenfold Counterweights", "wp_name": "Osenfold Waypoint", "wp": "[&BAEEAAA=]" },
-		{ "n": "108", "target": "Overlord Lodge", "wp_name": "Overlord's Waypoint", "wp": "[&BAQAAAA=]" },
-		{ "n": "109", "target": "Phasmatis Prospect", "wp_name": "Irondock Shipyard Waypoint", "wp": "[&BIoBAAA=]" },
-		{ "n": "110", "target": "Pochtecatl's Desire", "wp_name": "Jelako Waypoint", "wp": "[&BK8BAAA=]" },
-		{ "n": "111", "target": "Port Authority Lost & Found", "wp_name": "Port Waypoint", "wp": "[&BAcFAAA=]" },
-		{ "n": "112", "target": "Portmatt's Promontory", "wp_name": "Sorrowful Waypoint", "wp": "[&BKQBAAA=]" },
-		{ "n": "113", "target": "Provatum Carcer", "wp_name": "Keeper's Waypoint", "wp": "[&BCYCAAA=]" },
-		{ "n": "114", "target": "Ramview Peak", "wp_name": "Travelen's Waypoint", "wp": "[&BGQCAAA=]" },
-		{ "n": "115", "target": "Raptor's Aerie", "wp_name": "Town of Cowlfang's Star Waypoint", "wp": "[&BOsBAAA=]" },
-		{ "n": "116", "target": "Raptor's Perch", "wp_name": "Winter Haven Waypoint", "wp": "[&BO4AAAA=]" },
-		{ "n": "117", "target": "Rata Pten Portico", "wp_name": "Criterion Waypoint", "wp": "[&BMkCAAA=]" },
-		{ "n": "118", "target": "Raven Nook", "wp_name": "Raven Waypoint", "wp": "[&BIgDAAA=]" },
-		{ "n": "119", "target": "Reef Drake Nesting Grounds", "wp_name": "Pearl Islet Waypoint", "wp": "[&BNUGAAA=]" },
-		{ "n": "120", "target": "Restless Footings", "wp_name": "Irwin Isle Waypoint", "wp": "[&BNICAAA=]" },
-		{ "n": "121", "target": "Reverberant's Watch", "wp_name": "Darkriven Waypoint", "wp": "[&BHUBAAA=]" },
-		{ "n": "122", "target": "Risewild Green", "wp_name": "Remanda Waypoint", "wp": "[&BKcBAAA=]" },
-		{ "n": "123", "target": "Rurik's View", "wp_name": "Rurikton Waypoint", "wp": "[&BCsDAAA=]" },
-		{ "n": "124", "target": "Saltflood Altar", "wp_name": "Saltflood Waypoint", "wp": "[&BMcBAAA=]" },
-		{ "n": "125", "target": "Sandwurm Prowl", "wp_name": "Pearl Islet Waypoint", "wp": "[&BNUGAAA=]" },
-		{ "n": "126", "target": "Scholar's Blind", "wp_name": "Toran Hollow Waypoint", "wp": "[&BFwCAAA=]" },
-		{ "n": "127", "target": "Scourgejaw Watchtower", "wp_name": "Village of Scalecatch Waypoint", "wp": "[&BOcBAAA=]" },
-		{ "n": "128", "target": "Scriptorium Nook", "wp_name": "Factorium Waypoint", "wp": "[&BKcDAAA=]" },
-		{ "n": "129", "target": "Sea Scorpion's Eye", "wp_name": "Meddler's Waypoint", "wp": "[&BB4DAAA=]" },
-		{ "n": "130", "target": "Sentinel Sink", "wp_name": "Brandwatch Encampment Waypoint", "wp": "[&BOkBAAA=]" },
-		{ "n": "131", "target": "Sepulchre Skylight", "wp_name": "Rally Waypoint", "wp": "[&BNIEAAA=]" },
-		{ "n": "132", "target": "Sharkhollow's Edge", "wp_name": "Twin Sisters Waypoint", "wp": "[&BPwBAAA=]" },
-		{ "n": "133", "target": "Shattered Loft", "wp_name": "Fort Cadence Waypoint", "wp": "[&BMUBAAA=]" },
-		{ "n": "134", "target": "Siamoth Refuge", "wp_name": "Brackwater Waypoint", "wp": "[&BM4BAAA=]" },
-		{ "n": "135", "target": "Skalecatch Butcher Shop", "wp_name": "Village of Scalecatch Waypoint", "wp": "[&BOcBAAA=]" },
-		{ "n": "136", "target": "Skalefound Cove", "wp_name": "Tuyere Command Post Waypoint", "wp": "[&BBgCAAA=]" },
-		{ "n": "137", "target": "Skalesplash Falls", "wp_name": "Okarinoo Waypoint", "wp": "[&BEYCAAA=]" },
-		{ "n": "138", "target": "Skalestash Hideaway", "wp_name": "Greysteel Armory Waypoint", "wp": "[&BIEBAAA=]" },
-		{ "n": "139", "target": "Skelknest Borehole", "wp_name": "Slough of Despond Waypoint", "wp": "[&BHwCAAA=]" },
-		{ "n": "140", "target": "Skibo Hall Dormitory", "wp_name": "Auxiliary Waypoint", "wp": "[&BLkEAAA=]" },
-		{ "n": "141", "target": "Skyshine Scratch", "wp_name": "Grey Gritta's Waypoint", "wp": "[&BKkAAAA=]" },
-		{ "n": "142", "target": "Snowden Safehouse", "wp_name": "Snowdrift Haven Waypoint", "wp": "[&BLkAAAA=]" },
-		{ "n": "143", "target": "Snowhowl Den", "wp_name": "Snowhawk Landing Waypoint", "wp": "[&BL8AAAA=]" },
-		{ "n": "144", "target": "Soggorsort Rotunda", "wp_name": "Titan's Staircase Waypoint", "wp": "[&BD0BAAA=]" },
-		{ "n": "145", "target": "Soren Draa Rest Stop", "wp_name": "Soren Draa Waypoint", "wp": "[&BEAAAAA=]" },
-		{ "n": "146", "target": "Source of Lament", "wp_name": "Skyheight Steading Waypoint", "wp": "[&BIECAAA=]" },
-		{ "n": "147", "target": "Sparwind's Lounge", "wp_name": "Imperator's Waypoint", "wp": "[&BK0DAAA=]" },
-		{ "n": "148", "target": "Spectrehaunt Socket", "wp_name": "Lights Waypoint", "wp": "[&BLICAAA=]" },
-		{ "n": "149", "target": "Steamscrap Overlook", "wp_name": "Lamentation Waypoint", "wp": "[&BOoAAAA=]" },
-		{ "n": "150", "target": "Steampipe Perch", "wp_name": "Lion Point Waypoint", "wp": "[&BNAGAAA=]" },
-		{ "n": "151", "target": "Steamy Steps", "wp_name": "Lion Point Waypoint", "wp": "[&BNAGAAA=]" },
-		{ "n": "152", "target": "Steelband's Tunnel", "wp_name": "Tumok's Waypoint", "wp": "[&BPsBAAA=]" },
-		{ "n": "153", "target": "Stentor Shelter", "wp_name": "Signal Peak Waypoint", "wp": "[&BO0CAAA=]" },
-		{ "n": "154", "target": "Stonebore Spiderhole", "wp_name": "Talajian Waypoint", "wp": "[&BIwBAAA=]" },
-		{ "n": "155", "target": "Strongpaw's Garden", "wp_name": "Nageling Waypoint", "wp": "[&BN0AAAA=]" },
-		{ "n": "156", "target": "Tactical Retreat", "wp_name": "Shipwreck Rock Waypoint", "wp": "[&BOQGAAA=]" },
-		{ "n": "157", "target": "Talus Steps", "wp_name": "Talus Waypoint", "wp": "[&BEQCAAA=]" },
-		{ "n": "158", "target": "Tarstar Copse", "wp_name": "Apostate Waypoint", "wp": "[&BB0CAAA=]" },
-		{ "n": "159", "target": "Tekki's Drawing Board", "wp_name": "Ulta Metamagicals Waypoint", "wp": "[&BGUAAAA=]" },
-		{ "n": "160", "target": "Thaumanova Spillway", "wp_name": "Muridian Waypoint", "wp": "[&BEcAAAA=]" },
-		{ "n": "161", "target": "The Karka Klub", "wp_name": "Pearl Islet Waypoint", "wp": "[&BNUGAAA=]" },
-		{ "n": "162", "target": "The People's Deadlock", "wp_name": "Groznev Waypoint", "wp": "[&BHkCAAA=]" },
-		{ "n": "163", "target": "The Workers' Stores", "wp_name": "Grey Road Waypoint", "wp": "[&BFoCAAA=]" },
-		{ "n": "164", "target": "Togatl Shore", "wp_name": "Viathan Waypoint", "wp": "[&BBAAAAA=]" },
-		{ "n": "165", "target": "Tower of Tribulation", "wp_name": "Tribulation Waypoint", "wp": "[&BFYCAAA=]" },
-		{ "n": "166", "target": "Toxal Spill", "wp_name": "Dry Top Entry Waypoint", "wp": "[&BIAHAAA=] out the portal" },
-		{ "n": "167", "target": "Trader's Stash", "wp_name": "Wolf Waypoint", "wp": "[&BIoDAAA=]" },
-		{ "n": "168", "target": "Trolltrap Pit", "wp_name": "Durmand Priory Waypoint", "wp": "[&BOkAAAA=]" },
-		{ "n": "169", "target": "Turai Tavern Stillroom", "wp_name": "Balthazar Waypoint", "wp": "[&BCgDAAA=]" },
-		{ "n": "170", "target": "Ulta Scraproom", "wp_name": "Ulta Metamagicals Waypoint", "wp": "[&BGUAAAA=]" },
-		{ "n": "171", "target": "Unseen Scratch", "wp_name": "Caledon Haven Waypoint", "wp": "[&BDwBAAA=]" },
-		{ "n": "172", "target": "Upsilon Hyperboloid", "wp_name": "Waste Hollows Waypoint", "wp": "[&BKgCAAA=]" },
-		{ "n": "173", "target": "Usharr's Threshold", "wp_name": "Toade's Head Waypoint", "wp": "[&BMsBAAA=]" },
-		{ "n": "174", "target": "Vacant Hermitage", "wp_name": "Guardian Stone Waypoint", "wp": "[&BP8BAAA=]" },
-		{ "n": "175", "target": "Venison Hollow", "wp_name": "Vanjir's Stead Waypoint", "wp": "[&BOUAAAA=]" },
-		{ "n": "176", "target": "Verdance Font", "wp_name": "Verdance Waypoint", "wp": "[&BBsDAAA=]" },
-		{ "n": "177", "target": "Vizier's Anteport", "wp_name": "Lone Post Waypoint", "wp": "[&BPcCAAA=]" },
-		{ "n": "178", "target": "Wassa's Terrace", "wp_name": "First Haven Waypoint", "wp": "[&BIsBAAA=]" },
-		{ "n": "179", "target": "Watchpoint Decimus", "wp_name": "Guardpoint Decimus Waypoint", "wp": "[&BJgDAAA=]" },
-		{ "n": "180", "target": "Wheelport Pub", "wp_name": "Mustering Ground Waypoint", "wp": "[&BKUDAAA=]" },
-		{ "n": "181", "target": "Whitland Sinkhole", "wp_name": "Old Sledge Site Waypoint", "wp": "[&BNQCAAA=]" },
-		{ "n": "182", "target": "Widd's Folly", "wp_name": "Mabon Waypoint", "wp": "[&BDoBAAA=]" },
-		{ "n": "183", "target": "Wikk's Gate", "wp_name": "Valance Tutory Waypoint", "wp": "[&BEwCAAA=]" },
-		{ "n": "184", "target": "Wildflame Monitor", "wp_name": "Soren Draa Waypoint", "wp": "[&BEAAAAA=]" },
-		{ "n": "185", "target": "Winterknell Impasse", "wp_name": "R&D Waypoint", "wp": "[&BBgDAAA=]" },
-		{ "n": "186", "target": "Wrelk's Salon", "wp_name": "Almuten Waypoint", "wp": "[&BJQBAAA=]" }
-	];
+	
+/* test selection:
+5. backroot fountain
+6. badjelly kelpbed
+9. black lion root cellar
+29. constellation parapet
+119. reef drake
+160. thaumonova spillway
+161. the karka klub
 
-	const my_ul = document.querySelector('.cont');
+
+*/
+
+const treks = [
+    { "n": "1", "target": "Altar Brook Lair", "wp_name": "Crossing Waypoint", "wp": "[&BPIAAAA=]", "wpc": 1 },
+    { "n": "2", "target": "Anthem's Hold", "wp_name": "Shipwreck Rock Waypoint", "wp": "[&BOQGAAA=]", "wpc": 2 },
+    { "n": "3", "target": "Anya's Patch", "wp_name": "Nolan Waypoint", "wp": "[&BN4AAAA=]", "wpc": 1 },
+    { "n": "4", "target": "Arctodus Haunt", "wp_name": "Vendrake's Homestead Waypoint", "wp": "[&BH4BAAA=]", "wpc": 1 },
+    { "n": "5", "target": "Backroot Fountain", "wp_name": "Reckoner's Waypoint", "wp": "[&BLsEAAA=]", "wpc": 4 },
+    { "n": "6", "target": "Badjelly Kelpbed", "wp_name": "Valslake Waypoint", "wp": "[&BMADAAA=]", "wpc": 1 },
+    { "n": "7", "target": "Bandit's Cabbage Patch", "wp_name": "Wynchona Rally Point Waypoint", "wp": "[&BKgAAAA=]", "wpc": 1 },
+    { "n": "8", "target": "Beetlestone Mirador", "wp_name": "Beetletun Waypoint", "wp": "[&BPoAAAA=]", "wpc": 1 },
+    { "n": "9", "target": "Black Lion Root Cellar", "wp_name": "Reckoner's Waypoint", "wp": "[&BLsEAAA=]", "wpc": 4 },
+    { "n": "10", "target": "Blackblade Butte", "wp_name": "Font of Rhand Waypoint", "wp": "[&BNwAAAA=]", "wpc": 1 },
+    { "n": "11", "target": "Blasted Sepulchre", "wp_name": "Blasted Moors Waypoint", "wp": "[&BNoAAAA=]", "wpc": 1 },
+    { "n": "12", "target": "Blood Ooze Gallery", "wp_name": "Mournful Waypoint", "wp": "[&BK0BAAA=]", "wpc": 1 },
+    { "n": "13", "target": "Bluup's Comeuppance", "wp_name": "Research Waypoint", "wp": "[&BLgEAAA=]", "wpc": 1 },
+    { "n": "14", "target": "Brandstrike Dig", "wp_name": "Helliot Mine Waypoint", "wp": "[&BEsBAAA=]", "wpc": 1 },
+    { "n": "15", "target": "Briarthorn Barrier", "wp_name": "Spiral Waypoint", "wp": "[&BDUBAAA=]", "wpc": 1 },
+    { "n": "16", "target": "Broken Falls Courtyard", "wp_name": "Ruins of Rin Waypoint", "wp": "[&BKwDAAA=]", "wpc": 2 },
+    { "n": "17", "target": "Broodmother Falls", "wp_name": "Yak's Bend Waypoint", "wp": "[&BIQCAAA=]", "wpc": 1 },
+    { "n": "18", "target": "Brothers' Notch", "wp_name": "Hero's Compass Waypoint", "wp": "[&BJADAAA=]", "wpc": 2 },
+    { "n": "19", "target": "Burstbubble Blind", "wp_name": "Tumok's Waypoint", "wp": "[&BPsBAAA=]", "wpc": 2 },
+    { "n": "20", "target": "Cache of the Pursued", "wp_name": "Caer Shadowfain Waypoint", "wp": "[&BCEDAAA=]", "wpc": 1 },
+    { "n": "21", "target": "Cademkrall Overlook", "wp_name": "Watchcrag Tower Waypoint", "wp": "[&BIgBAAA=]", "wpc": 1 },
+    { "n": "22", "target": "Canyonweb Cave", "wp_name": "Brandview Waypoint", "wp": "[&BAQCAAA=]", "wpc": 1 },
+    { "n": "23", "target": "Captain's Berth", "wp_name": "Lights Waypoint", "wp": "[&BLICAAA=]", "wpc": 2 },
+    { "n": "24", "target": "Castavall Corner", "wp_name": "Castavall Waypoint", "wp": "[&BK4BAAA=]", "wpc": 1 },
+    { "n": "25", "target": "Cathedral's Cavity", "wp_name": "Union Waypoint", "wp": "[&BKsCAAA=]", "wpc": 1 },
+    { "n": "26", "target": "Cave Bear Cache", "wp_name": "Snowhawk Landing Waypoint", "wp": "[&BL8AAAA=]", "wpc": 2 },
+    { "n": "27", "target": "Cave Spider Nidus", "wp_name": "Pinnacle Enclave Waypoint", "wp": "[&BJgBAAA=]", "wpc": 1 },
+    { "n": "28", "target": "Claypool Bailey", "wp_name": "Claypool Waypoint", "wp": "[&BPYAAAA=]", "wpc": 1 },
+    { "n": "29", "target": "Constellation Parapet", "wp_name": "Reckoner's Waypoint", "wp": "[&BLsEAAA=]", "wpc": 4 },
+    { "n": "30", "target": "Corruption's Teeth", "wp_name": "Drakkar Waypoint", "wp": "[&BIYCAAA=]", "wpc": 1 },
+    { "n": "31", "target": "Covington's Stowage", "wp_name": "Laughing Gull Waypoint", "wp": "[&BKgBAAA=]", "wpc": 1 },
+    { "n": "32", "target": "Cutthroat's Rest", "wp_name": "Brigantine Waypoint", "wp": "[&BM0DAAA=]", "wpc": 1 },
+    { "n": "33", "target": "Cymbel's Glen", "wp_name": "Ogre Road Waypoint", "wp": "[&BE8BAAA=]", "wpc": 2 },
+    { "n": "34", "target": "Dawngleam Pergola", "wp_name": "Ronan's Waypoint", "wp": "[&BLwEAAA=]", "wpc": 1 },
+    { "n": "35", "target": "Deepmire Diver", "wp_name": "Oxbow Isle Waypoint", "wp": "[&BNECAAA=]", "wpc": 1 },
+    { "n": "36", "target": "Defiled Delve", "wp_name": "Darkwound Waypoint", "wp": "[&BBEAAAA=]", "wpc": 2 },
+    { "n": "37", "target": "Delight's Balcony", "wp_name": "Pagga's Waypoint", "wp": "[&BKYCAAA=]", "wpc": 1 },
+    { "n": "38", "target": "Destiny's Guildhall", "wp_name": "Shaemoor Waypoint", "wp": "[&BO8AAAA=]", "wpc": 1 },
+    { "n": "39", "target": "Dirtclaw Cleft", "wp_name": "Bloodfin Lake Waypoint", "wp": "[&BOMBAAA=]", "wpc": 1 },
+    { "n": "40", "target": "Doefalls Court", "wp_name": "Ascalon City Waypoint", "wp": "[&BIcBAAA=]", "wpc": 1 },
+    { "n": "41", "target": "Drakecleft Shelf", "wp_name": "Fangfury Watch Waypoint", "wp": "[&BEwBAAA=]", "wpc": 1 },
+    { "n": "42", "target": "Drakehatch Shore", "wp_name": "Breachwater Waypoint", "wp": "[&BGQBAAA=]", "wpc": 1 },
+    { "n": "43", "target": "Droknah Gate", "wp_name": "Old Sledge Site Waypoint", "wp": "[&BNQCAAA=]", "wpc": 2 },
+    { "n": "44", "target": "Drowned Plaza", "wp_name": "Signal Peak Waypoint", "wp": "[&BO0CAAA=]", "wpc": 2 },
+    { "n": "45", "target": "East End Falls", "wp_name": "East End Waypoint", "wp": "[&BGAAAAA=]", "wpc": 1 },
+    { "n": "46", "target": "Eastlurk Alley", "wp_name": "Dwayna Waypoint", "wp": "[&BCMDAAA=]", "wpc": 1 },
+    { "n": "47", "target": "Elise's Surprise", "wp_name": "Demetra Waypoint", "wp": "[&BKsAAAA=]", "wpc": 1 },
+    { "n": "48", "target": "Ettinbreath Lair", "wp_name": "Demon's Maw Waypoint", "wp": "[&BOYAAAA=]", "wpc": 1 },
+    { "n": "49", "target": "Fathom Five Forcefield", "wp_name": "Vesper Bell Waypoint", "wp": "[&BPICAAA=]", "wpc": 1 },
+    { "n": "50", "target": "Fawcett's Porch", "wp_name": "Arca Waypoint", "wp": "[&BLIAAAA=]", "wpc": 1 },
+    { "n": "51", "target": "Fire Imp Pocket", "wp_name": "Maelstrom's Waypoint", "wp": "[&BM0CAAA=]", "wpc": 1 },
+    { "n": "52", "target": "Firefrog Springs", "wp_name": "Flamefrog Waypoint", "wp": "[&BMwBAAA=]", "wpc": 1 },
+    { "n": "53", "target": "Firewatch Flybridge", "wp_name": "Firewatch Encampment Waypoint", "wp": "[&BO0BAAA=]", "wpc": 1 },
+    { "n": "54", "target": "Fisher's Crag", "wp_name": "Old Golem Factory Waypoint", "wp": "[&BK4EAAA=]", "wpc": 1 },
+    { "n": "55", "target": "Flakk's Lapidary Nook", "wp_name": "Accountancy Waypoint", "wp": "[&BLYEAAA=]", "wpc": 1 },
+    { "n": "56", "target": "Forager's Midden", "wp_name": "Steelbrachen Waypoint", "wp": "[&BFsCAAA=]", "wpc": 1 },
+    { "n": "57", "target": "Forbidden Shear", "wp_name": "Murmur Waypoint", "wp": "[&BK8CAAA=]", "wpc": 1 },
+    { "n": "58", "target": "Foreman's Recess", "wp_name": "Dociu Waypoint", "wp": "[&BFgCAAA=]", "wpc": 1 },
+    { "n": "59", "target": "Forgotten Grotto", "wp_name": "Terra Carorunda Waypoint", "wp": "[&BAECAAA=]", "wpc": 1 },
+    { "n": "60", "target": "Founder's Flagon Hearth", "wp_name": "Kestrel Waypoint", "wp": "[&BD0EAAA=]", "wpc": 1 },
+    { "n": "61", "target": "Freestand Scaffold", "wp_name": "Ruins of Rin Waypoint", "wp": "[&BKwDAAA=]", "wpc": 2 },
+    { "n": "62", "target": "Frozen Antrum", "wp_name": "White Paper Waypoint", "wp": "[&BE8CAAA=]", "wpc": 1 },
+    { "n": "63", "target": "Gallow Canyons", "wp_name": "Gallowfields Waypoint", "wp": "[&BGMAAAA=]", "wpc": 1 },
+    { "n": "64", "target": "Gardenroot Alcove", "wp_name": "Reckoner's Waypoint", "wp": "[&BLsEAAA=]", "wpc": 4 },
+    { "n": "65", "target": "Gnashar's Viewpoint", "wp_name": "Wendon Waypoint", "wp": "[&BF0AAAA=]", "wpc": 1 },
+    { "n": "66", "target": "Green Moa Paddock", "wp_name": "Caledon Haven Waypoint", "wp": "[&BDwBAAA=]", "wpc": 2 },
+    { "n": "67", "target": "Grenth's Pavillion", "wp_name": "Grenth Waypoint", "wp": "[&BCQDAAA=]", "wpc": 1 },
+    { "n": "68", "target": "Grimsdottir's Duty", "wp_name": "Shelter Rock Waypoint", "wp": "[&BIsDAAA=]", "wpc": 1 },
+    { "n": "69", "target": "Guardian Overwatch", "wp_name": "Grey Gritta's Waypoint", "wp": "[&BKkAAAA=]", "wpc": 2 },
+    { "n": "70", "target": "Hawkeye Perch", "wp_name": "Serpent Waypoint", "wp": "[&BEUCAAA=]", "wpc": 1 },
+    { "n": "71", "target": "Heart Speaks Notch", "wp_name": "Apostate Waypoint", "wp": "[&BB0CAAA=]", "wpc": 2 },
+    { "n": "72", "target": "Heartwoods Honey Cache", "wp_name": "Phinney Waypoint", "wp": "[&BPMAAAA=]", "wpc": 1 },
+    { "n": "73", "target": "Heidi's Showpiece", "wp_name": "Seraph's Landing Waypoint", "wp": "[&BKcAAAA=]", "wpc": 1 },
+    { "n": "74", "target": "Hermit's Roost", "wp_name": "Rosko's Campsite Waypoint", "wp": "[&BNgAAAA=]", "wpc": 1 },
+    { "n": "75", "target": "Hidden Owl Distillery", "wp_name": "Owl Waypoint", "wp": "[&BMEAAAA=]", "wpc": 1 },
+    { "n": "76", "target": "Holystone Sanctum", "wp_name": "Sanctum Waypoint", "wp": "[&BMUDAAA=]", "wpc": 1 },
+    { "n": "77", "target": "Icewurm Trench", "wp_name": "Dimotiki Waypoint", "wp": "[&BH8CAAA=]", "wpc": 1 },
+    { "n": "78", "target": "Ideation Leap", "wp_name": "Incubation Waypoint", "wp": "[&BLUEAAA=]", "wpc": 1 },
+    { "n": "79", "target": "Imphaunt Hallow", "wp_name": "Wychmire Waypoint", "wp": "[&BEEBAAA=]", "wpc": 1 },
+    { "n": "80", "target": "Irondock Viewpoint", "wp_name": "Duskrend Overlook Waypoint", "wp": "[&BIkBAAA=]", "wpc": 1 },
+    { "n": "81", "target": "Isenfell Wash", "wp_name": "Isenfall Waypoint", "wp": "[&BLgAAAA=]", "wpc": 1 },
+    { "n": "82", "target": "Isgarren Viewpoint", "wp_name": "Darkwound Waypoint", "wp": "[&BBEAAAA=]", "wpc": 2 },
+    { "n": "83", "target": "Jaguar Pride Den", "wp_name": "Muridian Waypoint", "wp": "[&BEcAAAA=]", "wpc": 3 },
+    { "n": "84", "target": "Junker's Apex", "wp_name": "Junker's Waypoint", "wp": "[&BDcEAAA=]", "wpc": 1 },
+    { "n": "85", "target": "Kaldar's Hot Seat", "wp_name": "Eastern Watchpost Waypoint", "wp": "[&BI0DAAA=]", "wpc": 1 },
+    { "n": "86", "target": "Kari's Hot Spot", "wp_name": "Cereboth Waypoint", "wp": "[&BBIAAAA=]", "wpc": 1 },
+    { "n": "87", "target": "Kegbrawl Watch", "wp_name": "Hero's Compass Waypoint", "wp": "[&BJADAAA=]", "wpc": 2 },
+    { "n": "88", "target": "Kevach's Strongroom", "wp_name": "Lostvyrm Cave Waypoint", "wp": "[&BMEDAAA=]", "wpc": 1 },
+    { "n": "89", "target": "Lakebottom Underpass", "wp_name": "Ojon's Lumbermill Waypoint", "wp": "[&BPkAAAA=]", "wpc": 1 },
+    { "n": "90", "target": "Lawen Grotto", "wp_name": "First Haven Waypoint", "wp": "[&BIsBAAA=]", "wpc": 2 },
+    { "n": "91", "target": "Lightfoot Dock", "wp_name": "Thunderhead Waypoint", "wp": "[&BPACAAA=]", "wpc": 1 },
+    { "n": "92", "target": "Lily's Bivvy", "wp_name": "Icespear's Waypoint", "wp": "[&BCACAAA=]", "wpc": 1 },
+    { "n": "93", "target": "Lionguard Larder", "wp_name": "Twinspur Haven Waypoint", "wp": "[&BH0BAAA=]", "wpc": 1 },
+    { "n": "94", "target": "Lychcroft Wardenship", "wp_name": "Shadowheart Site Waypoint", "wp": "[&BAwAAAA=]", "wpc": 1 },
+    { "n": "95", "target": "Magihedron Corner", "wp_name": "Metrical Court Waypoint", "wp": "[&BBMEAAA=]", "wpc": 1 },
+    { "n": "96", "target": "Master Control LIN39", "wp_name": "Muridian Waypoint", "wp": "[&BEcAAAA=]", "wpc": 3 },
+    { "n": "97", "target": "Melandru's Fount", "wp_name": "Melandru Waypoint", "wp": "[&BCcDAAA=]", "wpc": 1 },
+    { "n": "98", "target": "Meltwater Cave", "wp_name": "Scale Strand Waypoint", "wp": "[&BEgCAAA=]", "wpc": 1 },
+    { "n": "99", "target": "Mina's Target Shoot", "wp_name": "Commons Waypoint", "wp": "[&BCoDAAA=]", "wpc": 1 },
+    { "n": "100", "target": "Mistriven Shelf", "wp_name": "Mistriven Waypoint", "wp": "[&BJkBAAA=]", "wpc": 1 },
+    { "n": "101", "target": "Moleberia Prison", "wp_name": "Halvaunt Waypoint", "wp": "[&BHgBAAA=]", "wpc": 1 },
+    { "n": "102", "target": "Monument to the Ancient One", "wp_name": "Owain's Refuge Waypoint", "wp": "[&BNgGAAA=]", "wpc": 1 },
+    { "n": "103", "target": "Narrowkraal Crossing", "wp_name": "Ogre Road Waypoint", "wp": "[&BE8BAAA=]", "wpc": 2 },
+    { "n": "104", "target": "Necrolith Landing", "wp_name": "Caledon Waypoint", "wp": "[&BBIEAAA=]", "wpc": 1 },
+    { "n": "105", "target": "Orecart Hoist", "wp_name": "Pig Iron Waypoint", "wp": "[&BBcCAAA=]", "wpc": 1 },
+    { "n": "106", "target": "Orvanic Sourcewaters", "wp_name": "Ocean's Gullet Waypoint", "wp": "[&BMkBAAA=]", "wpc": 1 },
+    { "n": "107", "target": "Osenfold Counterweights", "wp_name": "Osenfold Waypoint", "wp": "[&BAEEAAA=]", "wpc": 1 },
+    { "n": "108", "target": "Overlord Lodge", "wp_name": "Overlord's Waypoint", "wp": "[&BAQAAAA=]", "wpc": 1 },
+    { "n": "109", "target": "Phasmatis Prospect", "wp_name": "Irondock Shipyard Waypoint", "wp": "[&BIoBAAA=]", "wpc": 1 },
+    { "n": "110", "target": "Pochtecatl's Desire", "wp_name": "Jelako Waypoint", "wp": "[&BK8BAAA=]", "wpc": 1 },
+    { "n": "111", "target": "Port Authority Lost & Found", "wp_name": "Port Waypoint", "wp": "[&BAcFAAA=]", "wpc": 1 },
+    { "n": "112", "target": "Portmatt's Promontory", "wp_name": "Sorrowful Waypoint", "wp": "[&BKQBAAA=]", "wpc": 1 },
+    { "n": "113", "target": "Provatum Carcer", "wp_name": "Keeper's Waypoint", "wp": "[&BCYCAAA=]", "wpc": 1 },
+    { "n": "114", "target": "Ramview Peak", "wp_name": "Travelen's Waypoint", "wp": "[&BGQCAAA=]", "wpc": 1 },
+    { "n": "115", "target": "Raptor's Aerie", "wp_name": "Town of Cowlfang's Star Waypoint", "wp": "[&BOsBAAA=]", "wpc": 1 },
+    { "n": "116", "target": "Raptor's Perch", "wp_name": "Winter Haven Waypoint", "wp": "[&BO4AAAA=]", "wpc": 1 },
+    { "n": "117", "target": "Rata Pten Portico", "wp_name": "Criterion Waypoint", "wp": "[&BMkCAAA=]", "wpc": 1 },
+    { "n": "118", "target": "Raven Nook", "wp_name": "Raven Waypoint", "wp": "[&BIgDAAA=]", "wpc": 1 },
+    { "n": "119", "target": "Reef Drake Nesting Grounds", "wp_name": "Pearl Islet Waypoint", "wp": "[&BNUGAAA=]", "wpc": 3 },
+    { "n": "120", "target": "Restless Footings", "wp_name": "Irwin Isle Waypoint", "wp": "[&BNICAAA=]", "wpc": 1 },
+    { "n": "121", "target": "Reverberant's Watch", "wp_name": "Darkriven Waypoint", "wp": "[&BHUBAAA=]", "wpc": 1 },
+    { "n": "122", "target": "Risewild Green", "wp_name": "Remanda Waypoint", "wp": "[&BKcBAAA=]", "wpc": 1 },
+    { "n": "123", "target": "Rurik's View", "wp_name": "Rurikton Waypoint", "wp": "[&BCsDAAA=]", "wpc": 1 },
+    { "n": "124", "target": "Saltflood Altar", "wp_name": "Saltflood Waypoint", "wp": "[&BMcBAAA=]", "wpc": 1 },
+    { "n": "125", "target": "Sandwurm Prowl", "wp_name": "Pearl Islet Waypoint", "wp": "[&BNUGAAA=]", "wpc": 3 },
+    { "n": "126", "target": "Scholar's Blind", "wp_name": "Toran Hollow Waypoint", "wp": "[&BFwCAAA=]", "wpc": 1 },
+    { "n": "127", "target": "Scourgejaw Watchtower", "wp_name": "Village of Scalecatch Waypoint", "wp": "[&BOcBAAA=]", "wpc": 2 },
+    { "n": "128", "target": "Scriptorium Nook", "wp_name": "Factorium Waypoint", "wp": "[&BKcDAAA=]", "wpc": 1 },
+    { "n": "129", "target": "Sea Scorpion's Eye", "wp_name": "Meddler's Waypoint", "wp": "[&BB4DAAA=]", "wpc": 1 },
+    { "n": "130", "target": "Sentinel Sink", "wp_name": "Brandwatch Encampment Waypoint", "wp": "[&BOkBAAA=]", "wpc": 1 },
+    { "n": "131", "target": "Sepulchre Skylight", "wp_name": "Rally Waypoint", "wp": "[&BNIEAAA=]", "wpc": 1 },
+    { "n": "132", "target": "Sharkhollow's Edge", "wp_name": "Twin Sisters Waypoint", "wp": "[&BPwBAAA=]", "wpc": 1 },
+    { "n": "133", "target": "Shattered Loft", "wp_name": "Fort Cadence Waypoint", "wp": "[&BMUBAAA=]", "wpc": 1 },
+    { "n": "134", "target": "Siamoth Refuge", "wp_name": "Brackwater Waypoint", "wp": "[&BM4BAAA=]", "wpc": 1 },
+    { "n": "135", "target": "Skalecatch Butcher Shop", "wp_name": "Village of Scalecatch Waypoint", "wp": "[&BOcBAAA=]", "wpc": 2 },
+    { "n": "136", "target": "Skalefound Cove", "wp_name": "Tuyere Command Post Waypoint", "wp": "[&BBgCAAA=]", "wpc": 1 },
+    { "n": "137", "target": "Skalesplash Falls", "wp_name": "Okarinoo Waypoint", "wp": "[&BEYCAAA=]", "wpc": 1 },
+    { "n": "138", "target": "Skalestash Hideaway", "wp_name": "Greysteel Armory Waypoint", "wp": "[&BIEBAAA=]", "wpc": 1 },
+    { "n": "139", "target": "Skelknest Borehole", "wp_name": "Slough of Despond Waypoint", "wp": "[&BHwCAAA=]", "wpc": 1 },
+    { "n": "140", "target": "Skibo Hall Dormitory", "wp_name": "Auxiliary Waypoint", "wp": "[&BLkEAAA=]", "wpc": 1 },
+    { "n": "141", "target": "Skyshine Scratch", "wp_name": "Grey Gritta's Waypoint", "wp": "[&BKkAAAA=]", "wpc": 2 },
+    { "n": "142", "target": "Snowden Safehouse", "wp_name": "Snowdrift Haven Waypoint", "wp": "[&BLkAAAA=]", "wpc": 1 },
+    { "n": "143", "target": "Snowhowl Den", "wp_name": "Snowhawk Landing Waypoint", "wp": "[&BL8AAAA=]", "wpc": 2 },
+    { "n": "144", "target": "Soggorsort Rotunda", "wp_name": "Titan's Staircase Waypoint", "wp": "[&BD0BAAA=]", "wpc": 1 },
+    { "n": "145", "target": "Soren Draa Rest Stop", "wp_name": "Soren Draa Waypoint", "wp": "[&BEAAAAA=]", "wpc": 2 },
+    { "n": "146", "target": "Source of Lament", "wp_name": "Skyheight Steading Waypoint", "wp": "[&BIECAAA=]", "wpc": 1 },
+    { "n": "147", "target": "Sparwind's Lounge", "wp_name": "Imperator's Waypoint", "wp": "[&BK0DAAA=]", "wpc": 1 },
+    { "n": "148", "target": "Spectrehaunt Socket", "wp_name": "Lights Waypoint", "wp": "[&BLICAAA=]", "wpc": 2 },
+    { "n": "149", "target": "Steamscrap Overlook", "wp_name": "Lamentation Waypoint", "wp": "[&BOoAAAA=]", "wpc": 1 },
+    { "n": "150", "target": "Steampipe Perch", "wp_name": "Lion Point Waypoint", "wp": "[&BNAGAAA=]", "wpc": 2 },
+    { "n": "151", "target": "Steamy Steps", "wp_name": "Lion Point Waypoint", "wp": "[&BNAGAAA=]", "wpc": 2 },
+    { "n": "152", "target": "Steelband's Tunnel", "wp_name": "Tumok's Waypoint", "wp": "[&BPsBAAA=]", "wpc": 2 },
+    { "n": "153", "target": "Stentor Shelter", "wp_name": "Signal Peak Waypoint", "wp": "[&BO0CAAA=]", "wpc": 2 },
+    { "n": "154", "target": "Stonebore Spiderhole", "wp_name": "Talajian Waypoint", "wp": "[&BIwBAAA=]", "wpc": 1 },
+    { "n": "155", "target": "Strongpaw's Garden", "wp_name": "Nageling Waypoint", "wp": "[&BN0AAAA=]", "wpc": 1 },
+    { "n": "156", "target": "Tactical Retreat", "wp_name": "Shipwreck Rock Waypoint", "wp": "[&BOQGAAA=]", "wpc": 2 },
+    { "n": "157", "target": "Talus Steps", "wp_name": "Talus Waypoint", "wp": "[&BEQCAAA=]", "wpc": 1 },
+    { "n": "158", "target": "Tarstar Copse", "wp_name": "Apostate Waypoint", "wp": "[&BB0CAAA=]", "wpc": 2 },
+    { "n": "159", "target": "Tekki's Drawing Board", "wp_name": "Ulta Metamagicals Waypoint", "wp": "[&BGUAAAA=]", "wpc": 2 },
+    { "n": "160", "target": "Thaumanova Spillway", "wp_name": "Muridian Waypoint", "wp": "[&BEcAAAA=]", "wpc": 3 },
+    { "n": "161", "target": "The Karka Klub", "wp_name": "Pearl Islet Waypoint", "wp": "[&BNUGAAA=]", "wpc": 3 },
+    { "n": "162", "target": "The People's Deadlock", "wp_name": "Groznev Waypoint", "wp": "[&BHkCAAA=]", "wpc": 1 },
+    { "n": "163", "target": "The Workers' Stores", "wp_name": "Grey Road Waypoint", "wp": "[&BFoCAAA=]", "wpc": 1 },
+    { "n": "164", "target": "Togatl Shore", "wp_name": "Viathan Waypoint", "wp": "[&BBAAAAA=]", "wpc": 1 },
+    { "n": "165", "target": "Tower of Tribulation", "wp_name": "Tribulation Waypoint", "wp": "[&BFYCAAA=]", "wpc": 1 },
+    { "n": "166", "target": "Toxal Spill", "wp_name": "Dry Top Entry Waypoint", "wp": "[&BIAHAAA=] out the portal", "wpc": 1 },
+    { "n": "167", "target": "Trader's Stash", "wp_name": "Wolf Waypoint", "wp": "[&BIoDAAA=]", "wpc": 1 },
+    { "n": "168", "target": "Trolltrap Pit", "wp_name": "Durmand Priory Waypoint", "wp": "[&BOkAAAA=]", "wpc": 1 },
+    { "n": "169", "target": "Turai Tavern Stillroom", "wp_name": "Balthazar Waypoint", "wp": "[&BCgDAAA=]", "wpc": 1 },
+    { "n": "170", "target": "Ulta Scraproom", "wp_name": "Ulta Metamagicals Waypoint", "wp": "[&BGUAAAA=]", "wpc": 2 },
+    { "n": "171", "target": "Unseen Scratch", "wp_name": "Caledon Haven Waypoint", "wp": "[&BDwBAAA=]", "wpc": 2 },
+    { "n": "172", "target": "Upsilon Hyperboloid", "wp_name": "Waste Hollows Waypoint", "wp": "[&BKgCAAA=]", "wpc": 1 },
+    { "n": "173", "target": "Usharr's Threshold", "wp_name": "Toade's Head Waypoint", "wp": "[&BMsBAAA=]", "wpc": 1 },
+    { "n": "174", "target": "Vacant Hermitage", "wp_name": "Guardian Stone Waypoint", "wp": "[&BP8BAAA=]", "wpc": 1 },
+    { "n": "175", "target": "Venison Hollow", "wp_name": "Vanjir's Stead Waypoint", "wp": "[&BOUAAAA=]", "wpc": 1 },
+    { "n": "176", "target": "Verdance Font", "wp_name": "Verdance Waypoint", "wp": "[&BBsDAAA=]", "wpc": 1 },
+    { "n": "177", "target": "Vizier's Anteport", "wp_name": "Lone Post Waypoint", "wp": "[&BPcCAAA=]", "wpc": 1 },
+    { "n": "178", "target": "Wassa's Terrace", "wp_name": "First Haven Waypoint", "wp": "[&BIsBAAA=]", "wpc": 2 },
+    { "n": "179", "target": "Watchpoint Decimus", "wp_name": "Guardpoint Decimus Waypoint", "wp": "[&BJgDAAA=]", "wpc": 1 },
+    { "n": "180", "target": "Wheelport Pub", "wp_name": "Mustering Ground Waypoint", "wp": "[&BKUDAAA=]", "wpc": 1 },
+    { "n": "181", "target": "Whitland Sinkhole", "wp_name": "Old Sledge Site Waypoint", "wp": "[&BNQCAAA=]", "wpc": 2 },
+    { "n": "182", "target": "Widd's Folly", "wp_name": "Mabon Waypoint", "wp": "[&BDoBAAA=]", "wpc": 1 },
+    { "n": "183", "target": "Wikk's Gate", "wp_name": "Valance Tutory Waypoint", "wp": "[&BEwCAAA=]", "wpc": 1 },
+    { "n": "184", "target": "Wildflame Monitor", "wp_name": "Soren Draa Waypoint", "wp": "[&BEAAAAA=]", "wpc": 2 },
+    { "n": "185", "target": "Winterknell Impasse", "wp_name": "R&D Waypoint", "wp": "[&BBgDAAA=]", "wpc": 1 },
+    { "n": "186", "target": "Wrelk's Salon", "wp_name": "Almuten Waypoint", "wp": "[&BJQBAAA=]", "wpc": 1 }
+]
+
+
+
+
+	const treksList = document.getElementById('trek-list');
+	const chattextsList = document.getElementById('chattexts-list');
+
+	const goBtn = document.getElementById('go-btn');
+
+	const chattextsCopiedPopover = document.getElementById('chattexts-copied-popover');
+
+	const popoverBody = document.getElementById('popover-body')
+
+	const chattextsPopover = document.getElementById('chattexts-popover');
+	const chattextsPopoverCloseBtn = document.getElementById('chattexts-popover-close-btn'); 
 
 	var previous_first_letter = ''
 
@@ -286,11 +388,9 @@
 			section_header.textContent = `-${first_letter}-`;
 			section_header.classList.add("alpha_header");
 			li.append(section_header)
-			my_ul.appendChild(li);
+			treksList.appendChild(li);
 			previous_first_letter = first_letter
 		}
-			
-			
 	
 		const li = document.createElement('li');
 		const label = document.createElement('label');
@@ -301,24 +401,156 @@
 		label.appendChild(checkbox);
 		label.appendChild( document.createTextNode(trek.target) );
 		li.appendChild(label);
-
-		my_ul.appendChild(li);
+		
+		treksList.appendChild(li);
 	});
 
-	const concatBtn = document.querySelector('#concat-btn');
 
-	concatBtn.addEventListener('click', () => {
-		const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+	function copy_treks_to_clipboard_and_clear() {
+
 		let output = '';
 		checkboxes.forEach((checkbox, index) => {
 			if (checkbox.checked) {
 				const trek = treks[index];
-				output += `${trek.target}: ${trek.wp} `;
+				if (trek.wpc > 1) {
+					output += `${trek.target}: ${trek.wp}`;
+				} else {
+					output += `${trek.wp}`;
+				}
 				checkbox.checked = false;
 			}
 		});
 		navigator.clipboard.writeText(output.trim());
 		console.log(output.trim());
+	}
+
+
+	function add_simple_chattext(chattext) {
+
+		li = document.createElement("li");
+		li.innerText = chattext.trim();
+		chattextsList.appendChild(li);
+
+	}
+
+	function add_chattext(chattext) {
+	
+		chattextDiv = document.createElement("div");
+		chattextDiv.classList.add('chattext');
+		
+		chattextDiv.innerHTML = chattext.trim()
+		popoverBody.appendChild(chattextDiv);
+
+	}
+
+
+
+	function populate_chattexts(active_treks_by_wp, active_trek_wps) {
+		
+		popoverBody.innerHTML = '';
+		
+		const max_wps_per_chattext = 7;
+		var wp_total = 0;
+		var chattext = '';
+		
+		active_trek_wps.forEach(wp => {
+		
+			num_wps = active_treks_by_wp[wp].length
+		
+			if( (wp_total + num_wps) > max_wps_per_chattext) {
+				add_chattext(chattext);
+				chattext = '';
+				wp_total = 0;
+			}
+
+			if(num_wps > 1) {
+				chattext += `${wp}(`
+				active_treks_by_wp[wp].forEach((trek, index) => {
+					chattext+= trek.target
+					console.log(index)
+					
+					if(index < num_wps-1) { 
+						chattext += ' & ' 
+					} else {
+						chattext += ')'
+					}
+				});
+			} else {
+				chattext += wp
+			}
+			
+			wp_total += num_wps;
+			
+			console.log(chattext) 
+
+		
+		});
+		
+		if(chattext.length > 0) { add_chattext(chattext); }
+		
+	}
+
+      popoverBody.addEventListener("click", (event) => {
+		const text = event.target.innerText;
+		if (text.length === 0) { return; }
+		navigator.clipboard.writeText(text)
+			.then(() => {
+				chattextsCopiedPopover.innerHTML = `${text}, copied to clipboard.`
+				console.log(`Copied ${text} to clipboard.`);
+				chattextsCopiedPopover.style.display = 'block';
+				setTimeout(function(){
+					chattextsCopiedPopover.style.display = 'none';
+				}, 2500);				
+			})
+			.catch((error) => {
+				console.error(`Could not copy ${text} to clipboard: ${error}.`);
+			});
+      });
+
+
+	goBtn.addEventListener('click', () => {
+	
+		if (chattextsPopover.style.display === 'block') {
+			return;
+		}
+	
+		const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+		
+		const active_treks_by_wp = {}
+		checkboxes.forEach((checkbox, index) => {
+			if (checkbox.checked) {
+				
+				wp = treks[index].wp			
+				
+				if(wp in active_treks_by_wp) {
+					active_treks_by_wp[wp].push(treks[index]);
+				} else {
+					active_treks_by_wp[wp] = [ treks[index] ];
+				}
+			}
+		});
+
+		console.log(active_treks_by_wp)
+		
+		active_trek_wps = Object.keys(active_treks_by_wp)
+//		console.log("unsorted:")
+//		console.log(active_trek_wps)
+		
+		active_trek_wps.sort(function(a, b){return active_treks_by_wp[b].length - active_treks_by_wp[a].length})
+
+//		console.log("sorted:")
+		console.log(active_trek_wps)
+		
+		populate_chattexts(active_treks_by_wp, active_trek_wps)
+		
+//		console.log(JSON.stringify(active_treks_by_wp))
+//		console.log(JSON.stringify(active_trek_wps))
+		
+		chattextsPopover.style.display = 'block';
+	});
+	
+	chattextsPopoverCloseBtn.addEventListener('click', () => {
+		chattextsPopover.style.display = 'none';
 	});
 	
 	function changeFontSize() {
@@ -328,8 +560,30 @@
 		for (var i = 0; i < cells.length; i++) {
 			cells[i].style.fontSize = value;
 		}
-	}	
+	}
+
+	document.addEventListener('click', function(event) {
+	  if (event.target !== goBtn && !chattextsPopover.contains(event.target)) {
+		chattextsPopover.style.display = 'none';
+	  }
+	});
+
+	
+	function check_test_targets() {
+
+		const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+		const test_targets = [2, 5, 6, 9, 29, 119, 160, 161, 77, 89, 66, 171, 33, 67, 99, 101, 156, 79, 150, 125];
+
+		test_targets.forEach( target => {
+			checkboxes[target-1].checked = true;
+		});
+
+	}
+	
+//	check_test_targets()
+	
 	</script>
 </body>
 </html>
+
 
