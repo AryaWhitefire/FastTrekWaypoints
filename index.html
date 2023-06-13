@@ -338,7 +338,7 @@ const treks = [
     { "n": "163", "target": "The Workers' Stores", "wp_name": "Grey Road Waypoint", "wp": "[&BFoCAAA=]", "wpc": 1 },
     { "n": "164", "target": "Togatl Shore", "wp_name": "Viathan Waypoint", "wp": "[&BBAAAAA=]", "wpc": 1 },
     { "n": "165", "target": "Tower of Tribulation", "wp_name": "Tribulation Waypoint", "wp": "[&BFYCAAA=]", "wpc": 1 },
-    { "n": "166", "target": "Toxal Spill", "wp_name": "Dry Top Entry Waypoint", "wp": "[&BIAHAAA=] out the portal", "wpc": 1 },
+    { "n": "166", "target": "Toxal Spill", "wp_name": "Dry Top Entry Waypoint", "wp": "[&BIAHAAA=]-out the portal", "wpc": 1 },
     { "n": "167", "target": "Trader's Stash", "wp_name": "Wolf Waypoint", "wp": "[&BIoDAAA=]", "wpc": 1 },
     { "n": "168", "target": "Trolltrap Pit", "wp_name": "Durmand Priory Waypoint", "wp": "[&BOkAAAA=]", "wpc": 1 },
     { "n": "169", "target": "Turai Tavern Stillroom", "wp_name": "Balthazar Waypoint", "wp": "[&BCgDAAA=]", "wpc": 1 },
@@ -480,7 +480,7 @@ const treks = [
 				console.log(active_treks_by_wp[wp][0].wpc)
 			
 				if (active_treks_by_wp[wp][0].wpc > 1)  {
-					chattext += `${wp}(${active_treks_by_wp[wp][0].target})`
+					chattext += `${wp}-${active_treks_by_wp[wp][0].target}`
 				} else {
 					chattext += wp
 				}
