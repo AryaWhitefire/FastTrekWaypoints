@@ -1,0 +1,1 @@
+A small web project that in combination with GW2 Taco or Blishhud, allows a small group of people, or even 1 person, with some luck, to complete 25 target Trek Guild Missions.  It automates the generation of copy/paste lists of nearest waypoints to the selected group of targets.
